@@ -1,0 +1,15 @@
+# Fdb version 3
+["dvips"] 0 "Informeppp.dvi" "Informeppp.ps" "Informeppp" 
+  "Informeppp.dvi" 0 -1 0 "latex"
+  (generated)
+  "Informeppp.ps"
+["latex"] 0 "Informeppp.tex" "Informeppp.dvi" "Informeppp" 
+  "Informeppp.aux" 1680564107 9 a94a2480d3289e625eea47cd1b285758 ""
+  "Informeppp.tex" 0 -1 0 ""
+  (generated)
+  "Informeppp.dvi"
+  "Informeppp.log"
+["ps2pdf"] 0 "Informeppp.ps" "Informeppp.pdf" "Informeppp" 
+  "Informeppp.ps" 0 -1 0 "dvips"
+  (generated)
+  "Informeppp.pdf"
