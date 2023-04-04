@@ -1,0 +1,195 @@
+\documentclass[a4paper]{article}
+\usepackage[spanish]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage[pdftex]{hyperref}
+\usepackage{todonotes}
+
+\begin{document}
+    \title{\textbf{Proyecto \#1 DAA:} Procastinaci\'on ++}
+    \author{L\'azaro Daniel Gonz\'alez Mart\'inez y Alejandra Monz\'on Pe\~na}
+    \date{}
+    \maketitle
+
+    \section*{Desccripci\'on del problema}
+    Sean las cadenas \textbf{S}, \textbf{T} y una cadena vac\'ia \textbf{A}, se construyen de la siguiente forma: 
+
+    \begin{itemize}
+        \item[$\diamond $] Quitar la primera letra de \textbf{S} y ponerla al inicio de la cadena \textbf{A}.
+        \item[$\diamond $] Quitar la primera letra de \textbf{S} y ponerla al final de la cadena \textbf{A}.    
+    \end{itemize}
+
+    Estas operaciones se pueden realizar hasta que \textbf{S} quede sin caracteres.\\ 
+
+    Se desea contar cuantas cadenas diferentes se pueden crear con estas operaciones tales que \textbf{T} sea prefijo de 
+    la nueva cadena.\\ 
+
+    Definimos por comodidad la construcci\'on de cadenas combinando de cualquier forma posible las dos operaciones permitidas como 
+    \textit{construcci\'on por aburrimiento}.
+
+    \section*{Soluci\'on Backtrack}
+    Una primera soluci\'on al problema planteado se puede obtener haciendo una exploraci\'on por todas las posibles cadenas que se pueden formar 
+    y en cada caso comprobar si \textbf{T} es prefijo de dicha cadena. 
+
+    		% Configuración de Listings
+	\lstset{keywordstyle=\color{blue}, basicstyle=\small}
+
+	\begin{figure}[htb]
+	
+    \begin{lstlisting}[language=Python]
+
+        def Procastinacion(S,T):
+            if len(T) > len(S):
+                return 0
+            return Procastinacion2(S,T,'',0)
+        
+        def Procastinacion2(S,T,A,i):
+            m = len(T)
+            k = len(A)
+            if len(S) <= i:
+                return T == A[0:m]
+            return Procastinacion2(S,T,f'{A}{S[i]}',i+1) 
+                        + Procastinacion2(S,T,f'{S[i]}{A}',i+1) 
+                            + ((m <= k) and (T == A[0:m]))
+	\end{lstlisting}
+	\caption{Código python del backtrack.}
+	\end{figure}
+
+    Este algoritmo de soluci\'on, aunque efectivo es demasiado costoso computacionalmente, sean $|S| = n$ y $|T| = m$, se tiene que:
+
+    \begin{equation*}
+        T(n) = 2 T(n-1) + m 
+    \end{equation*}
+
+    de donde,al utilizar el Teorema Maestro para funciones decrecientes, se obtiene para este problema que 
+     $T(n) = \Theta(2^n + m)$.
+
+    \section*{Explotando caracter\'isticas del problema}
+    Una primera mejora que se puede hacer, se basa en la idea de que la primera letra de \textbf{S} 
+    al poder colocarse tanto al inicio como al final de la cadena vac\'ia \textbf{A}, a partir de esa decisi\'on 
+    se generan dos \'arboles de cadenas exactamente iguales(con las mismas cadenas), solo que estas se pueden considerar '' diferentes '' por 
+    haber tenido una decisi\'on inicial distinta.\\ 
+
+    Por tanto una mejora inicial, consiste en no duplicar innecesariamente el espacio de b\'usqueda, sino que asumir que en \textbf{A} inicialmente 
+    est\'a el primer caracter de \textbf{S} y duplicar el resultado final. Aunque esta idea no mejora la complejidad temporal, reduce a la mitad la cantidad de operaciones a realizar.
+
+    Al analizar la forma en que se manipulan los caracteres de \textbf{S} para originar nuevos vocablos, se 
+
+    \section*{Soluci\'on con Programaci\'on Din\'amica}
+
+    Representando las cadenas \textbf{S} y \textbf{T} por sus caracteres, tenemos:
+
+    \begin{itemize}
+        \item[] \textbf{T} = $T_0T_1 ... T_{m-1}$
+        \item[] \textbf{S} = $S_0S_1 ... T_{n-1}$ 
+    \end{itemize}
+
+    Entonces $T_i$ ($S_i$) denota al i-\'esimo m\'as un cararacter de \textbf{T}(\textbf{S}), de igual modo 
+    $T_{i...j}$($S_{i...j}$) denota a la subcadena $T_iT_{i+1}...T_j$ ($S_iS_{i+1}...S_{j}$) de la cadena \textbf{T} (\textbf{S}).\\
+    
+    Definiendo la funci\'on $f(i,j)$ como la cantidad de cadenas $A_{i...j}$ \textit{construir por aburrimiento} con los primeros $j-i+1$ 
+    caracteres de S (es decir con los caracteres de $S_{0...j-i}$) donde 
+    donde para $j < m$, $A_{i...j} = T_{i...j}$ y para $j \geq m $, $A_{i...j} = T_{i...m-1}A_{m...j}$.\\ 
+    
+    Luego $\sum_{j= m-1}^{n-1}f(0,j)$ es la cantidad total de cadenas que se pueden \textit{construir por aburrimiento} que tienen como prefijo a \textbf{T}.\\
+    
+    Notemos qu\'e, para $i < m$ se cumple que: %TODO:
+
+    \begin{equation*}
+        f(i,i) = \left\{ \begin{aligned}
+            &2, &T_i = S_0\\
+            &0, &eoc
+        \end{aligned} \right.
+    \end{equation*}
+
+    Esto se debe a que, como queremos formar subcadenas de tama\~no 1 de \textbf{T} con el primer caracter de \textbf{S}, tenemos en los casos que hay coincidencia, dos maneras de colocar el caracter, (por delante y por detr\'as) y en los restantes casos 
+    se tiene 0 puesto que no se tiene ninguna subcadena de \textbf{T} de longitud 1 al tomar ese caracter.\\
+    
+    Adem\'as se cumple, para $i \geq m$, que $f(i,i) = 2$, puesto que hasta ahora tenemos una posible cadena A de tama\~no $i-1$, con prefijo \textbf{T} y cualquiera sea el pr\'oximo caracter 
+    $S_i$ se puede colocar al final de \textbf{A}; el valor es 2 puesto que esta cadena \textbf{A} pudo tener como decisi\'on inicial para su primer cract\'er (el primero que se haya colocado, no necasariamente el que quede en la posici\'on 0) 
+    cualquiera de las dos variantes (ponerlo por delante, o por atr\'as).\\ 
+
+    A modo general $f(i,j)$ se puede construir recursivamente como: 
+
+    \begin{equation*}
+        f(i,j) = f(i+1,j)\mathbb{I}_{ \{T_i == S_{j-i+1} \vee i \geq m \}}  +  f(i,j-1)\mathbb{I}_{ \{T_j == S_{j-i+1} \vee j \geq m \} } 
+    \end{equation*}
+
+    Ya que $S_{j-i+1}$ se puede agregar por delante a las cadenas $A_{i+1}...A_j$, o por atr\'as a las cadenas 
+    $A_{i}...A_{j-1}$, cuando $S_{j-i+1}$ coincide con $T_i$ o $T_j$ respectivamente, formando as\'i cadenas $A_{i}...A_{j}$.\\
+
+    En los casos que $j \geq m$, a la subcadena $A_{i...j-1}$ se le puede agregar el caracter $S_{j-i+1}$ por atr\'as sin afectar 
+    el prefijo, generando la cantidad de cadenas que hab\'ia en $f(i,j-1)$, pero ahora de la forma $A_{i...j}$.\\
+    
+    Por \'ultimo cuando $i \geq m$ entonces $j \geq m$ y se cumple lo anterior adem\'as de que ahora se puede agregar $S_{j-i+1}$ como prefijo de 
+    $A_{i+1...j}$ y por lo tanto tendr\'iamos $f(i+1,j)$ cadenas m\'as de la forma $A_{i...j}$.
+    
+    \begin{lstlisting}[language=Python]
+    	
+    	def solve_dp(S,T):
+    	    n = len(S)
+    	    m = len(T)
+    	    
+    	    dp = [[0 for j in range(n)] for i in range(n)]
+    	    
+    	    i = 0
+    	    while i < n:
+    	        if i >= m or T[i] == S[0]:
+    	            dp[i][i] = 2
+    	        i+=1    	        
+    	    
+    	    k = 1
+    	    while k < n:
+    	        c = S[k]    	        
+    	        i = 0
+    	        j = k
+    	        while j < n:
+    	            if i >= m or c == T[i]:
+    	                dp[i][j] += dp[i+1][j]
+    	            if j >= m or c == T[j]:
+    	                dp[i][j] += dp[i][j-1]
+                 
+    	            i += 1
+    	            j += 1
+    	    k += 1
+    	    
+    	    return sum(dp[0][m-1:])
+    \end{lstlisting}
+	
+	\section*{Correctitud del algoritmo}
+	
+	Como nos queda claro que $\sum_{j= m-1}^{n-1}f(0,j)$ es la respuesta a nuestro problema, demostrar que $dp[i][j] = f(i,j)$, sería suficiente para probar la correctitud del algoritmo. Por lo tanto demostremos que en el momento que se actualiza el valor de $dp[i][j]$ este coincidirá con $f(i,j)$.
+	
+	Hagamos inducción en la longitud de la cadena que estamos formando $A_{i...j}$, lo que es equivalente a hacer la inducción sobre el ciclo en que itera $k$.
+	
+	\begin{itemize}
+		\item Caso base: $|A_{i...j}| = 1$
+		
+		Como por definición, $i \leq j$ entonces $|A_{i...j}| = 1$ si y solo si $i = j$, ya que $|A_{i...j}| = j-i + 1 = 1$.
+		Luego todas las cadenas que puedan pertenecer a nuestro caso base están en la diagonal de $dp$, y se inicializan atendiendo a la definición de $f(i, i)$ dada \todo{Citar arriba}, entonces tenemos que:
+		$$dp[i][i] = f(i, i)$$
+		Note que se inicializan así en la linea \todo{Citar linea} de nuestro código.
+		
+		\item Caso Hipótesis: Supongamos que para toda cadena $A_{i^\prime...j^\prime}$ de tamaño menor que $p$ se cumple que $dp[i^\prime][j^\prime] = f(i^\prime, j^\prime)$ con $j^\prime - i^\prime + 1 < p$. Esto es equivalente a que hasta la iteración $p-1$ del ciclo que itera sobre $k$, se cumple que lo planteado anteriormente\footnote{Observe que, para que la fórmula tenga sentido, $i^\prime \leq j^\prime$}.
+		
+		Sea $A_{i...j}$ de tamaño $p$. Podemos asumir $i<j$, porque el caso base ya está tratado a parte. Luego como
+		$$f(i,j) = f(i+1,j)\mathbb{I}_{ \{T_i == S_{j-i+1} \vee i \geq m \}}  +  f(i,j-1)\mathbb{I}_{ \{T_j == S_{j-i+1} \vee j \geq m \} } $$
+		se aprecia que $f(i,j)$ depende de los valores de $f(i+1,j)$ y $f(i,j-1)$. Luego como $|A_{i+1...j}| = j-(i+1) + 1 = j-i$, y $j-i < p$, entonces por hipótesis $f(i+1,j) = dp[i+1][j]$. De manera similar como $|A_{i...j-1}| = j-1 - i + 1 = j-i < p$, aplicamos la hipótesis pero en este caso $f(i,j-1) = dp[i][j-1]$.
+		Luego
+		$$f(i,j) = dp[i+1][j]\mathbb{I}_{ \{T_i == S_{j-i+1} \vee i \geq m \}}  +  dp[i][j-1]\mathbb{I}_{ \{T_j == S_{j-i+1} \vee j \geq m \} } $$
+		y finalmente $dp[i][j]$ al actualizarse con este cálculo nos quedará:
+		$$dp[i][j] = f(i,j)$$				
+	\end{itemize}
+
+	Luego por Principio de Inducción Matemática queda demostrado que al concluir el algoritmo queda computado para cada $dp[i][j]$, con $0 \leq i\leq j < n$, la cantidad de cadenas $A_{i...j}$ que se pueden \textit{construir por aburrimiento} con los primeros $|A_{i...j}| = j-i+1$ caracteres de $S$, es decir, queda guardado en $dp[i][j]$ el valor de $f(i,j)$.	
+	
+	\section*{Complejidad Temporal}
+	
+	
+
+
+\end{document}
