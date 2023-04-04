@@ -353,5 +353,5 @@ MigrationBackup/
 *.aux
 *.log
 *.out
-*.pdf
+#*.pdf
 *.synctex.gz
