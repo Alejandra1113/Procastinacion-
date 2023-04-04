@@ -16,7 +16,7 @@
     \maketitle
 
     \section*{Desccripci\'on del problema}
-    Sean las cadenas \textbf{S}, \textbf{T} y una cadena vac\'ia \textbf{A}, se construyen de la siguiente forma: 
+    Sean las cadenas \textbf{S}, \textbf{T} y una cadena vac\'ia \textbf{A}, se construyen nuevas cadenas de la siguiente forma: 
 
     \begin{itemize}
         \item[$\diamond $] Quitar la primera letra de \textbf{S} y ponerla al inicio de la cadena \textbf{A}.
@@ -116,7 +116,7 @@
     A modo general $f(i,j)$ se puede construir recursivamente como: 
 
     \begin{equation*}
-        f(i,j) = f(i+1,j)\mathbb{I}_{ \{T_i == S_{j-i+1} \vee i \geq m \}}  +  f(i,j-1)\mathbb{I}_{ \{T_j == S_{j-i+1} \vee j \geq m \} } 
+        f(i,j) = f(i+1,j)\mathbb{I}_{ \{T_i = S_{j-i+1} \vee i \geq m \}}  +  f(i,j-1)\mathbb{I}_{ \{T_j = S_{j-i+1} \vee j \geq m \} } 
     \end{equation*}
 
     Ya que $S_{j-i+1}$ se puede agregar por delante a las cadenas $A_{i+1}...A_j$, o por atr\'as a las cadenas 
@@ -129,35 +129,31 @@
     $A_{i+1...j}$ y por lo tanto tendr\'iamos $f(i+1,j)$ cadenas m\'as de la forma $A_{i...j}$.
     
     \begin{lstlisting}[language=Python]
-    	
-    	def solve_dp(S,T):
-    	    n = len(S)
-    	    m = len(T)
-    	    
-    	    dp = [[0 for j in range(n)] for i in range(n)]
-    	    
-    	    i = 0
-    	    while i < n:
-    	        if i >= m or T[i] == S[0]:
-    	            dp[i][i] = 2
-    	        i+=1    	        
-    	    
-    	    k = 1
-    	    while k < n:
-    	        c = S[k]    	        
-    	        i = 0
-    	        j = k
-    	        while j < n:
-    	            if i >= m or c == T[i]:
-    	                dp[i][j] += dp[i+1][j]
-    	            if j >= m or c == T[j]:
-    	                dp[i][j] += dp[i][j-1]
-                 
-    	            i += 1
-    	            j += 1
-    	    k += 1
-    	    
-    	    return sum(dp[0][m-1:])
+def solve_dp(S,T):
+    n = len(S)
+    m = len(T)
+        
+    if m > n:
+        return 0
+        
+    dp = [[0 for j in range(n)] for i in range(n)]
+    
+    for i in range(n):
+        if i >= m or T[i] == S[0]:
+            dp[i][i] = 2
+    
+    for k in range(1, n):    
+        c = S[k]
+        
+        i = 0        
+        for j in range(k, n):
+            if i >= m or c == T[i]:
+                dp[i][j] += dp[i+1][j]
+            if j >= m or c == T[j]:
+                dp[i][j] += dp[i][j-1]            
+            i += 1            
+    
+    return sum(dp[0][m-1:])
     \end{lstlisting}
 	
 	\section*{Correctitud del algoritmo}
@@ -177,10 +173,10 @@
 		\item Caso Hipótesis: Supongamos que para toda cadena $A_{i^\prime...j^\prime}$ de tamaño menor que $p$ se cumple que $dp[i^\prime][j^\prime] = f(i^\prime, j^\prime)$ con $j^\prime - i^\prime + 1 < p$. Esto es equivalente a que hasta la iteración $p-1$ del ciclo que itera sobre $k$, se cumple que lo planteado anteriormente\footnote{Observe que, para que la fórmula tenga sentido, $i^\prime \leq j^\prime$}.
 		
 		Sea $A_{i...j}$ de tamaño $p$. Podemos asumir $i<j$, porque el caso base ya está tratado a parte. Luego como
-		$$f(i,j) = f(i+1,j)\mathbb{I}_{ \{T_i == S_{j-i+1} \vee i \geq m \}}  +  f(i,j-1)\mathbb{I}_{ \{T_j == S_{j-i+1} \vee j \geq m \} } $$
+		$$f(i,j) = f(i+1,j)\mathbb{I}_{ \{T_i = S_{j-i+1} \vee i \geq m \}}  +  f(i,j-1)\mathbb{I}_{ \{T_j = S_{j-i+1} \vee j \geq m \} } $$
 		se aprecia que $f(i,j)$ depende de los valores de $f(i+1,j)$ y $f(i,j-1)$. Luego como $|A_{i+1...j}| = j-(i+1) + 1 = j-i$, y $j-i < p$, entonces por hipótesis $f(i+1,j) = dp[i+1][j]$. De manera similar como $|A_{i...j-1}| = j-1 - i + 1 = j-i < p$, aplicamos la hipótesis pero en este caso $f(i,j-1) = dp[i][j-1]$.
 		Luego
-		$$f(i,j) = dp[i+1][j]\mathbb{I}_{ \{T_i == S_{j-i+1} \vee i \geq m \}}  +  dp[i][j-1]\mathbb{I}_{ \{T_j == S_{j-i+1} \vee j \geq m \} } $$
+		$$f(i,j) = dp[i+1][j]\mathbb{I}_{ \{T_i = S_{j-i+1} \vee i \geq m \}}  +  dp[i][j-1]\mathbb{I}_{ \{T_j = S_{j-i+1} \vee j \geq m \} } $$
 		y finalmente $dp[i][j]$ al actualizarse con este cálculo nos quedará:
 		$$dp[i][j] = f(i,j)$$				
 	\end{itemize}
@@ -189,7 +185,62 @@
 	
 	\section*{Complejidad Temporal}
 	
+	Definir e inicializar la matriz $dp$ se hace en $2n^2$ operaciones ya que esta tiene dimensión $n \times n$.
 	
+	El ciclo que itera por $k$ ejecuta el ciclo que itera por $j$, unas $n-1$ veces. Y este ciclo se ejecuta $n-k$ veces para la iteración $k$. Es decir, ambos ciclos ejecutan un total de veces igual a:
+	$$ \sum_{k=1}^{n-1} (n-k) = (n-1) + (n-2) + ... + 1 = \frac{n(n-1)}{2} $$
+	
+	Finalmente cuando se calcula la suma de los $dp[0][i]$ para $i \geq m$, se hacen $n-m + 1$ iteraciones.
+	
+	Por lo tanto al sumar cada uno de estos costos considerando también, el tiempo constante que requieren las operaciones intermedias, nos quedaría algo así:
+	
+	$$T(n,m) = c_1 + 2n^2 + c_2\frac{n(n-1)}{2} + n-m+1$$
+	
+	Demostremos que $T(n,m)$ es $O(n^2)$:
+	
+	Para esto debemos encontrar una constante $C$ tal que a partir de cierto $n$, se cumpla $T(n,m) \leq Cn^2$.
+	$$T(n,m) \leq c_1 + 2n^2 + c_2\frac{n(n-1)}{2} + n + 1$$
+	
+	Calculemos el límite:
+	$$ \lim_{n}\left(\frac{c_1 + 2n^2 + c_2\frac{n(n-1)}{2} + n + 1}{n^2}\right)$$
+	$$= \lim_{n}\left(\frac{2c_1 + 4n^2 + c_2n(n-1) + 2n + 2}{2n^2}\right)$$
+	$$= \frac{4+c_2}{2}$$
+	Como este límite es finito y mayor que $0$, existirá una constante $C$ tal que :
+	$$ c_1 + 2n^2 + c_2\frac{n(n-1)}{2} + n + 1 \leq Cn^2$$
+	y por transitividad, $ T(n,m) \leq Cn^2 $. Luego $T(n,m)$ es $O(n^2)$.
+	
+	Incluso si queremos ser más exquisitos podemos demostrar que $T(n,m) = \theta(n^2)$. \\
+	
+	Como:
+	$$c_1 + 2n^2 + c_2\frac{n(n-1)}{2} \leq T(n,m)$$
+	Calculando el límite siguiente:
+	$$ \lim_{n}\left(\frac{c_1 + 2n^2 + c_2\frac{n(n-1)}{2}}{n^2}\right)$$
+	$$= \lim_{n}\left(\frac{2c_1 + 4n^2 + c_2n(n-1)}{2n^2}\right)$$
+	$$= \frac{4+c_2}{2}$$
+	De forma similar, existirá una constante $C$ tal que a partir de cierto $n$, se cumple que 
+	$$Cn^2 \leq c_1 + 2n^2 + c_2\frac{n(n-1)}{2}$$
+	y por transitividad se cumple que $Cn^2 \leq T(n,m)$. Luego $T(n,m) = \Omega(n^2)$. Y finalmente $T(n,m)$ es $\theta(n^2)$.
+	
+	\section*{Generador y Probador de casos}
+	
+	Para comprobar la correctitud y eficiencia de los algoritmos creamos un generador y probador de casos pruebas. Para la generación de casos definimos 3 alfabetos:
+	\begin{itemize}
+		\item $A_1 = \{\texttt{a},\texttt{b},\texttt{c}\}$
+		\item $A_2 = \{\texttt{a},\texttt{b},\texttt{c},\texttt{d}\}$
+		\item $A_3 = \{\texttt{a},\texttt{b},\texttt{c},\texttt{d},\texttt{e}\}$
+	\end{itemize}
+
+	Generamos $6$ cadenas $T$, con longitud entre $2$ y $19$. Y por cada $T$ se generaron cadenas $S$ de tamaño desde $|T|$ hasta $10|T|-1$, de $3$ tipos, mezclando aleatoriamente las letras de $T$ con las que se pueden añadir según el alfabeto del tipo seleccionado:
+	\begin{itemize}
+	\item Tipo 1: Añadiendo caracteres del Alfabeto 1
+	\item Tipo 2: Añadiendo caracteres del Alfabeto 2
+	\item Tipo 3: Añadiendo caracteres del Alfabeto 3
+	\end{itemize}
+	La selección aleatoria de los caracteres es uniforme, es decir, cada letra tiene la misma probabilidad de ser seleccionada.
+	
+	De esta forma se generaron $22680$ casos de pruebas de los que $7404$ resultaron con valor de $0$ al ser evaluadas por el algoritmo de programación dinámica, para representar el $32.6455\%$ de los casos totales. Para comparar ambos algoritmos, se utilizaron $630$ casos de pruebas de los que el $92$ de ellos resultaron en $0$, representando el $14.6031\%$ de estos. Además para los $630$ casos seleccionados, se obtuvo el mismo valor al evaluar ambos algoritmos. La diferencia significativa de ambos algoritmos es en la complejidad temporal, donde analíticamente son muy diferentes. Y en la práctica esto se comprobó donde, los $630$ casos corrieron en menos de $1$ minuto con el algoritmo de programación dinámica. Mientras que con el algoritmo de backtrack, se demoró más de $12$ horas.
+	
+	El generador, el tester, y el comparador se encuentran en los archivos \texttt{generator.py}, \texttt{tester.py} y \texttt{check.py}, respectivamente.
 
 
 \end{document}

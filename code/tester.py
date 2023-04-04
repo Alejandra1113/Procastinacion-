@@ -12,6 +12,6 @@ def run_tester(path_cases, solve, keys):
         print(f'{key} {result}')
 
 
-#run_tester('cases_01.json', dp.solve_dp, range(22680))
-run_tester('cases_01.json', ppp.Procastinacion, range(500,1000))
+run_tester('cases_01.json', dp.solve_dp, range(22680))
+#run_tester('cases_01.json', ppp.Procastinacion, range(500,1000))
 #run_tester('cases_01.json', 'result_cases_01_ppp', ppp.Procastinacion)

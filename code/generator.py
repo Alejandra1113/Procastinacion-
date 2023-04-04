@@ -4,7 +4,6 @@ import json
 A1 = 'abc'
 A2 = 'abcd'
 A3 = 'abcde'
-A4 = 'abcdef'
 
 def generate_T(alphabet, size):
     return rand.choices(alphabet, k=size)  
