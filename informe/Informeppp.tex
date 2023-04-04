@@ -8,6 +8,7 @@
 \usepackage{amssymb}
 \usepackage[pdftex]{hyperref}
 \usepackage{todonotes}
+\usepackage{graphicx}
 
 \begin{document}
     \title{\textbf{Proyecto \#1 DAA:} Procastinaci\'on ++}
@@ -25,8 +26,8 @@
 
     Estas operaciones se pueden realizar hasta que \textbf{S} quede sin caracteres.\\ 
 
-    Se desea contar cuantas cadenas diferentes se pueden crear con estas operaciones tales que \textbf{T} sea prefijo de 
-    la nueva cadena.\\ 
+    Se desea contar cuántas cadenas diferentes se pueden crear con estas operaciones tales que \textbf{T} sea prefijo de 
+    la nueva cadena (\textbf{A}).\\ 
 
     Definimos por comodidad la construcci\'on de cadenas combinando de cualquier forma posible las dos operaciones permitidas como 
     \textit{construcci\'on por aburrimiento}.
@@ -62,22 +63,19 @@
     Este algoritmo de soluci\'on, aunque efectivo es demasiado costoso computacionalmente, sean $|S| = n$ y $|T| = m$, se tiene que:
 
     \begin{equation*}
-        T(n) = 2 T(n-1) + m 
+        T(n,m) = 2 T(n-1) + m 
     \end{equation*}
 
-    de donde,al utilizar el Teorema Maestro para funciones decrecientes, se obtiene para este problema que 
-     $T(n) = \Theta(2^n + m)$.
+    de donde, al utilizar el Teorema Maestro para funciones decrecientes, se obtiene para este problema que 
+     $T(n,m) = \Theta(2^n + m)$.
 
     \section*{Explotando caracter\'isticas del problema}
     Una primera mejora que se puede hacer, se basa en la idea de que la primera letra de \textbf{S} 
-    al poder colocarse tanto al inicio como al final de la cadena vac\'ia \textbf{A}, a partir de esa decisi\'on 
-    se generan dos \'arboles de cadenas exactamente iguales(con las mismas cadenas), solo que estas se pueden considerar '' diferentes '' por 
+    al poder colocarse tanto al inicio como al final de la cadena vac\'ia \textbf{A}, se generan así dos \'arboles de cadenas exactamente iguales (con las mismas cadenas), solo que estas se pueden considerar ``diferentes'' por 
     haber tenido una decisi\'on inicial distinta.\\ 
 
-    Por tanto una mejora inicial, consiste en no duplicar innecesariamente el espacio de b\'usqueda, sino que asumir que en \textbf{A} inicialmente 
+    Por tanto una mejora inicial, consiste en no duplicar innecesariamente el espacio de b\'usqueda, sino asumir que en \textbf{A} inicialmente 
     est\'a el primer caracter de \textbf{S} y duplicar el resultado final. Aunque esta idea no mejora la complejidad temporal, reduce a la mitad la cantidad de operaciones a realizar.
-
-    Al analizar la forma en que se manipulan los caracteres de \textbf{S} para originar nuevos vocablos, se 
 
     \section*{Soluci\'on con Programaci\'on Din\'amica}
 
@@ -91,27 +89,54 @@
     Entonces $T_i$ ($S_i$) denota al i-\'esimo m\'as un cararacter de \textbf{T}(\textbf{S}), de igual modo 
     $T_{i...j}$($S_{i...j}$) denota a la subcadena $T_iT_{i+1}...T_j$ ($S_iS_{i+1}...S_{j}$) de la cadena \textbf{T} (\textbf{S}).\\
     
-    Definiendo la funci\'on $f(i,j)$ como la cantidad de cadenas $A_{i...j}$ \textit{construir por aburrimiento} con los primeros $j-i+1$ 
+    Definamos la funci\'on $f(i,j)$ como la cantidad de cadenas $A_{i...j}$ \textit{construidas por aburrimiento} con los primeros $j-i+1$ 
     caracteres de S (es decir con los caracteres de $S_{0...j-i}$) donde 
-    donde para $j < m$, $A_{i...j} = T_{i...j}$ y para $j \geq m $, $A_{i...j} = T_{i...m-1}A_{m...j}$.\\ 
+    para:
+    \begin{itemize}
+    	\item[i] $j < m$, $\quad A_{i...j} = T_{i...j}$
+    	\item[ii] $j \geq m $ y $i < m $, $\quad A_{i...j} = T_{i...m-1}A_{m...j}$
+    	\item[iii] $i > m $, $\quad A_{i...j} = A_{i...j}$
+    \end{itemize}
     
     Luego $\sum_{j= m-1}^{n-1}f(0,j)$ es la cantidad total de cadenas que se pueden \textit{construir por aburrimiento} que tienen como prefijo a \textbf{T}.\\
     
     Notemos qu\'e, para $i < m$ se cumple que: %TODO:
 
-    \begin{equation*}
+    \begin{equation}\label{eq:1}
         f(i,i) = \left\{ \begin{aligned}
             &2, &T_i = S_0\\
             &0, &eoc
         \end{aligned} \right.
-    \end{equation*}
+    \end{equation}
 
-    Esto se debe a que, como queremos formar subcadenas de tama\~no 1 de \textbf{T} con el primer caracter de \textbf{S}, tenemos en los casos que hay coincidencia, dos maneras de colocar el caracter, (por delante y por detr\'as) y en los restantes casos 
-    se tiene 0 puesto que no se tiene ninguna subcadena de \textbf{T} de longitud 1 al tomar ese caracter.\\
+    Esto se debe a que, como queremos formar subcadenas de tama\~no 1 de \textbf{T} con el primer caracter de \textbf{S}, tenemos en los casos que hay coincidencia (\ref{fig:ppp1}), dos maneras de colocar el caracter, (por delante y por detr\'as) y en los restantes casos 
+    se tiene 0 puesto que no se tiene ninguna subcadena de \textbf{T} de longitud 1 al tomar ese caracter (\ref{fig:ppp0}).\\
+        
+    \begin{figure}[!h]
+    	\centering
+    	\includegraphics[width=0.7\linewidth]{ppp1}
+    	\caption{}
+    	\label{fig:ppp1}
+    \end{figure}
+
+	\begin{figure}[!h]
+		\centering
+		\includegraphics[width=0.7\linewidth]{ppp0}
+		\caption{}
+		\label{fig:ppp0}
+	\end{figure}
+
     
-    Adem\'as se cumple, para $i \geq m$, que $f(i,i) = 2$, puesto que hasta ahora tenemos una posible cadena A de tama\~no $i-1$, con prefijo \textbf{T} y cualquiera sea el pr\'oximo caracter 
-    $S_i$ se puede colocar al final de \textbf{A}; el valor es 2 puesto que esta cadena \textbf{A} pudo tener como decisi\'on inicial para su primer cract\'er (el primero que se haya colocado, no necasariamente el que quede en la posici\'on 0) 
-    cualquiera de las dos variantes (ponerlo por delante, o por atr\'as).\\ 
+    
+    Adem\'as se cumple, para $i \geq m$, que $f(i,i) = 2$, puesto que poner cualquier caracter en posiciones de \textbf{A} mayores que el prefijo $T$ (\ref{fig:ppp2}) origina una cadena de longitud 1 válida para la definición de la función $f$ (iii) y el valor es 2, puesto que de igual modo este caracter se pudo colocar por delante o por atrás de la cadena vacía.\\
+    
+    \begin{figure}[!h]
+    	\centering
+    	\includegraphics[width=0.7\linewidth]{ppp2}
+    	\caption{}
+    	\label{fig:ppp2}
+    \end{figure}
+     
 
     A modo general $f(i,j)$ se puede construir recursivamente como: 
 
@@ -119,14 +144,59 @@
         f(i,j) = f(i+1,j)\mathbb{I}_{ \{T_i = S_{j-i+1} \vee i \geq m \}}  +  f(i,j-1)\mathbb{I}_{ \{T_j = S_{j-i+1} \vee j \geq m \} } 
     \end{equation*}
 
-    Ya que $S_{j-i+1}$ se puede agregar por delante a las cadenas $A_{i+1}...A_j$, o por atr\'as a las cadenas 
-    $A_{i}...A_{j-1}$, cuando $S_{j-i+1}$ coincide con $T_i$ o $T_j$ respectivamente, formando as\'i cadenas $A_{i}...A_{j}$.\\
-
-    En los casos que $j \geq m$, a la subcadena $A_{i...j-1}$ se le puede agregar el caracter $S_{j-i+1}$ por atr\'as sin afectar 
-    el prefijo, generando la cantidad de cadenas que hab\'ia en $f(i,j-1)$, pero ahora de la forma $A_{i...j}$.\\
+    Ya que $S_{j-i+1}$ se puede agregar por delante a las cadenas $A_{i+1}...A_j$ (\ref{fig:ppp3}), o por atr\'as a las cadenas 
+    $A_{i}...A_{j-1}$ (\ref{fig:ppp4}), cuando $S_{j-i+1}$ coincide con $T_i$ o $T_j$ respectivamente, formando as\'i cadenas $A_{i}...A_{j}$.\\
     
-    Por \'ultimo cuando $i \geq m$ entonces $j \geq m$ y se cumple lo anterior adem\'as de que ahora se puede agregar $S_{j-i+1}$ como prefijo de 
-    $A_{i+1...j}$ y por lo tanto tendr\'iamos $f(i+1,j)$ cadenas m\'as de la forma $A_{i...j}$.
+    \begin{figure}[h!]
+    	\centering
+    	\includegraphics[width=0.7\linewidth]{ppp3}
+    	\caption{}
+    	\label{fig:ppp3}
+    \end{figure}
+    \begin{figure}[h!]
+    	\centering
+    	\includegraphics[width=0.7\linewidth]{ppp4}
+    	\caption{}
+    	\label{fig:ppp4}
+    \end{figure}
+    
+
+    En los casos (ii), a la subcadena $A_{i...j-1}$ se le puede agregar el caracter $S_{j-i+1}$ por atr\'as sin afectar 
+    el prefijo (\ref{fig:ppp5a}), generando la cantidad de cadenas que hab\'ia en $f(i,j-1)$, pero ahora de la forma $A_{i...j}$. Note que esta condición no implica que no se pueda cumplir que $T_{i} =  S_{j-i+1}$ por lo que en este caso podría ponerse por delante sin problema (\ref{fig:ppp5}).\\
+    
+    \begin{figure}[h!]
+    	\centering
+    	\includegraphics[width=0.7\linewidth]{ppp5a}
+    	\caption{}
+    	\label{fig:ppp5a}
+    \end{figure}
+
+	\begin{figure}[h!]
+		\centering
+		\includegraphics[width=0.7\linewidth]{ppp5}
+		\caption{}
+		\label{fig:ppp5}
+	\end{figure}
+    
+    
+    Por \'ultimo cuando $i \geq m$ entonces $j \geq m$ y se puede agregar $S_{j-i+1}$ como prefijo de 
+    $A_{i+1...j}$ (\ref{fig:ppp6}) y como sufijo de $A_{i...j-1}$ (\ref{fig:ppp7}) cayendo en el caso (iii), por lo tanto tendr\'iamos $f(i+1,j) + f(i,j-1)$ cadenas de la forma $A_{i...j}$.
+    
+    \begin{figure}[h!]
+    	\centering
+    	\includegraphics[width=0.7\linewidth]{ppp6}
+    	\caption{}
+    	\label{fig:ppp6}
+    \end{figure}
+    \begin{figure}[h!]
+    	\centering
+    	\includegraphics[width=0.7\linewidth]{ppp7}
+    	\caption{}
+    	\label{fig:ppp7}
+    \end{figure}
+
+\section*{Implementación de la dinámica}
+    
     
     \begin{lstlisting}[language=Python]
 def solve_dp(S,T):
@@ -166,9 +236,9 @@ def solve_dp(S,T):
 		\item Caso base: $|A_{i...j}| = 1$
 		
 		Como por definición, $i \leq j$ entonces $|A_{i...j}| = 1$ si y solo si $i = j$, ya que $|A_{i...j}| = j-i + 1 = 1$.
-		Luego todas las cadenas que puedan pertenecer a nuestro caso base están en la diagonal de $dp$, y se inicializan atendiendo a la definición de $f(i, i)$ dada \todo{Citar arriba}, entonces tenemos que:
-		$$dp[i][i] = f(i, i)$$
-		Note que se inicializan así en la linea \todo{Citar linea} de nuestro código.
+		Luego todas las cadenas que puedan pertenecer a nuestro caso base están en la diagonal de $dp$, y se inicializan atendiendo a la definición de $f(i, i)$ dada en (\ref{eq:1}), entonces tenemos que:
+		$$dp[i][i] = f(i, i)$$.
+		Note que se inicializan así en el ciclo que itera por $i$ del código.
 		
 		\item Caso Hipótesis: Supongamos que para toda cadena $A_{i^\prime...j^\prime}$ de tamaño menor que $p$ se cumple que $dp[i^\prime][j^\prime] = f(i^\prime, j^\prime)$ con $j^\prime - i^\prime + 1 < p$. Esto es equivalente a que hasta la iteración $p-1$ del ciclo que itera sobre $k$, se cumple que lo planteado anteriormente\footnote{Observe que, para que la fórmula tenga sentido, $i^\prime \leq j^\prime$}.
 		
@@ -181,7 +251,7 @@ def solve_dp(S,T):
 		$$dp[i][j] = f(i,j)$$				
 	\end{itemize}
 
-	Luego por Principio de Inducción Matemática queda demostrado que al concluir el algoritmo queda computado para cada $dp[i][j]$, con $0 \leq i\leq j < n$, la cantidad de cadenas $A_{i...j}$ que se pueden \textit{construir por aburrimiento} con los primeros $|A_{i...j}| = j-i+1$ caracteres de $S$, es decir, queda guardado en $dp[i][j]$ el valor de $f(i,j)$.	
+	Luego por Principio de Inducción Matemática demostramos que al concluir el algoritmo queda computado para cada $dp[i][j]$, con $0 \leq i\leq j < n$, la cantidad de cadenas $A_{i...j}$ que se pueden \textit{construir por aburrimiento} con los primeros $|A_{i...j}| = j-i+1$ caracteres de $S$, es decir, queda guardado en $dp[i][j]$ el valor de $f(i,j)$.	
 	
 	\section*{Complejidad Temporal}
 	
