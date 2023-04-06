@@ -15,7 +15,7 @@ def ppp(S,T):
         count += sum((prefix[i][-1] - prefix[i+1][-1])* (2**(i -1)) *(T[-1]==S[i]) for i in range(m-1,n))*2
         return count
     #Si la primera letra no pertenece al prefijo(Puede extenderse a que en S haya un caracter que no pertenezca a T antes que aparezca en S el ultimo caracter de T)        
-    return sum((prefix[i][-1] - prefix[i+1][-1])* (2**(i -1)) *(T[-1]==S[i]) for i in range(len(S))) *2
+    return int(sum((prefix[i][-1] - prefix[i+1][-1])* (2**(i -1)) *(T[-1]==S[i]) for i in range(len(S))) *2)
 
 
 def compute_prefix(S,T):
@@ -51,7 +51,5 @@ def compute_sufix(S,T):
                 if c == T[j]:
                     dp[i][j] += dp[i][j-1]            
                 i += 1  
-        return dp  
+        return dp
 
-
-print(ppp("cbababbca", "cb"))
