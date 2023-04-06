@@ -9,13 +9,10 @@ def ppp(S,T):
     if T.__contains__(S[0]):#Aqui hay que ver bien que hacer, pero con buscar cuantos sufizo de T se pueden formas tal 
         #que el ultimo movimiento sea poner la letra hacia atras y luego combinar con una mtriz como la del else.
         sufix = compute_sufix(S, T)
-        count= 0
-        if(S[0:m-1:-1] == T):
-            count += (sufix[0][m-1] -2) * (n - m + 1)
-        else: count += sufix[0][m-1] * (n - m + 1)
-        for i in range(1,m):
-            count += sufix[i][m-1]* prefix[m-1][i]
-        count += sum((prefix[i][-1] - prefix[i+1][-1])* (2**(i -1)) *(T[-1]==S[i]) for i in range(len(S)))*2
+        count= sufix[0][m-1] * (n - m +1)
+        for i in range(1,m):           
+            count += sufix[i][m-1]* prefix[m][i-1]
+        count += sum((prefix[i][-1] - prefix[i+1][-1])* (2**(i -1)) *(T[-1]==S[i]) for i in range(m-1,n))*2
         return count
     #Si la primera letra no pertenece al prefijo(Puede extenderse a que en S haya un caracter que no pertenezca a T antes que aparezca en S el ultimo caracter de T)        
     return sum((prefix[i][-1] - prefix[i+1][-1])* (2**(i -1)) *(T[-1]==S[i]) for i in range(len(S))) *2
@@ -57,4 +54,4 @@ def compute_sufix(S,T):
         return dp  
 
 
-print(ppp("hola","hola"))
+print(ppp("cbababbca", "cb"))
