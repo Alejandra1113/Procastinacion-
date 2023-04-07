@@ -5,11 +5,17 @@ def check(path_1, range_1, path_2, range_2):
         solutions_1 = fp.readlines()
     with open(path_2) as fp:
         solutions_2 = fp.readlines()
-    eq = 0    
+    eq = 0   
+    fails = [] 
     for i, j in zip(range_1,range_2):
         if solutions_1[i].split()[1] == solutions_2[j].split()[1]:
             eq += 1
-    return eq
+        else:  
+            fails.append(solutions_1[i].split()[0])
+    return eq, fails
 
-print(check('result_cases_01_dp.txt', range(0,266), 'result_cases_01_ppp_265.txt', range(0,266)))
+goods, fails = check('code/result_dp.txt', range(0,22680), 'code/result_dpNxM.txt', range(0,22680))
+print(goods)
+if len(fails) > 0:
+    print(fails[:50])
     
