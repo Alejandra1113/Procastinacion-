@@ -70,8 +70,8 @@
 
     \section*{Explotando caracter\'isticas del problema}
     Una primera mejora que se puede hacer, se basa en la idea de que la primera letra de $S$ 
-    al poder colocarse tanto al inicio como al final de la cadena vac\'ia $A$, se generan así dos \'arboles de cadenas exactamente iguales (con las mismas cadenas), solo que estas se pueden considerar ``diferentes'' por 
-    haber tenido una decisi\'on inicial distinta.\\ 
+    al poder colocarse tanto al inicio como al final de la cadena vac\'ia $A$, genera dos \'arboles de cadenas exactamente iguales (con las mismas cadenas), solo que estas se pueden considerar ``diferentes'' por 
+    haber tenido un movimiento inicial distinto.\\ 
 
     Por tanto una mejora inicial, consiste en no duplicar innecesariamente el espacio de b\'usqueda, sino asumir que en $A$ inicialmente 
     est\'a el primer caracter de $S$ y duplicar el resultado final. Aunque esta idea no mejora la complejidad temporal, reduce a la mitad la cantidad de operaciones a realizar.
@@ -112,17 +112,17 @@
     se tiene 0 puesto que no se tiene ninguna subcadena de $T$ de longitud 1 al tomar ese caracter (\ref{fig:ppp0}).\\
         
     \begin{figure}[!h]
+    	\label{fig:ppp1}
     	\centering
     	\includegraphics[width=0.7\linewidth]{ppp1}
     	\caption{}
-    	\label{fig:ppp1}
     \end{figure}
 
 	\begin{figure}[!h]
+		\label{fig:ppp0}
 		\centering
 		\includegraphics[width=0.7\linewidth]{ppp0}
 		\caption{}
-		\label{fig:ppp0}
 	\end{figure}
 
     
@@ -130,10 +130,10 @@
     Adem\'as se cumple, para $i \geq m$, que $f(i,i) = 2$, puesto que poner cualquier caracter en posiciones de $A$ mayores que el prefijo $T$ (\ref{fig:ppp2}) origina una cadena de longitud 1 válida para la definición de la función $f$ (iii) y el valor es 2, puesto que de igual modo este caracter se pudo colocar por delante o por atrás de la cadena vacía.\\
     
     \begin{figure}[!h]
+    	\label{fig:ppp2}
     	\centering
     	\includegraphics[width=0.7\linewidth]{ppp2}
     	\caption{}
-    	\label{fig:ppp2}
     \end{figure}
      
 
@@ -147,16 +147,16 @@
     $A_{i}...A_{j-1}$ (\ref{fig:ppp4}), cuando $S_{j-i+1}$ coincide con $T_i$ o $T_j$ respectivamente, formando as\'i cadenas $A_{i}...A_{j}$.\\
     
     \begin{figure}[h!]
+    	\label{fig:ppp3}
     	\centering
     	\includegraphics[width=0.7\linewidth]{ppp3}
     	\caption{}
-    	\label{fig:ppp3}
     \end{figure}
     \begin{figure}[h!]
+        \label{fig:ppp4}
     	\centering
     	\includegraphics[width=0.7\linewidth]{ppp4}
     	\caption{}
-    	\label{fig:ppp4}
     \end{figure}
     
 
@@ -304,7 +304,7 @@ def solve_dp(S,T):
     es mayor que la posici\'on de $S_0$ en $A$. Como asumimos que $S_k$ est\'a en el prefijo $T$ de $A$, entonces todo otro caracter anterior 
     a $S_k$ en $A$ tiene que estar en el prefijo $T$, por lo tanto $S_0$ tendr\'ia que estar en el prefijo, lo cual es una contradicci\'on. As\'i queda demostrado que 
     si $S_0$ no pertenece a las letras que forman a $T$, todas las cadenas $A$ que tengan a $T$ como prefijo construidas por aburimiento, 
-    contruyen al prefijo solo com movimientos hacia adelante.\\
+    contruyen al prefijo solo con movimientos hacia adelante.\\
 
     De la demostraci\'on anterior se deduce que como solo se usan movimientos hacia alante, reverso del prefijo $T$ ha de ser subsecuencia de $S$.\\
 
@@ -392,6 +392,9 @@ para demostrar la correctitud del algoritmo. Primero demostremos que $dp[i][0] =
 
 \end{itemize}
 
+Ya demostrado el caso para $j=0$ procedamos a demostrar con otra inducci\'on que $dp[i][j]$ es consistente con los valores de la funci\'on $prefix(i,j)$ para 
+todos los restantes valores de $0 \leq j \leq i \leq n$
+
 \begin{itemize}
     \item Caso Base: $j = 0$ 
     
@@ -439,7 +442,7 @@ para demostrar la correctitud del algoritmo. Primero demostremos que $dp[i][0] =
     \'ultimo caracter de $T$ el caracter $S_i$. Observe que antes de $S_{i}$ podemos formar
     de cualquier forma (por aburrimiento) cadenas antes de empezar a formar el prefijo.
     La cantidad de formas para construir cadenas con los primeros $i-1$ caracteres ser\'ia
-    colocar una a una las letras de $2$ formas: por delante o por detr\'as. Esto nos dar'ia
+    colocar una a una las letras de $2$ formas: por delante o por detr\'as. Esto nos dar\'ia
     un \'arbol binario de profundidad $i-1$, en el cual la cantidad de cadenas ser\'ia $2^{i-1}$.
     Note que cuando no hay caracteres, es decir, cuando la primera letra forma parte de $T$,
     partimos con solo una forma de generar $T$ (con movimientos hacia adelante).
@@ -580,7 +583,7 @@ para demostrar la correctitud del algoritmo. Primero demostremos que $dp[i][0] =
 
     La obtenci\'on de $m$ tiene costo constante $c_1$, la creaci\'on de las matrices $dp$ y $tmdp$ es de $4m^2$ cada una.
     El ciclo que pone los valores iniciales en la matriz $tmdp$ tiene un costo de $2c_2m$ y finalmente se tiene  
-    un ciclo que itera $m-1$ veces y en cada iteraci\'on ejecuta otro ciclo de $m-1$ iteraciones en el que a su vez se teien que en el peor caso se ejecutan 
+    un ciclo que itera $m-1$ veces y en cada iteraci\'on ejecuta otro ciclo de $m-1$ iteraciones, en este en el peor caso se ejecutan 
     operaciones de costo constante $c_3$. Finalmente se tiene que: 
 
     $$S(n,m) = c_1 + 4m^2 + 4m^2 + 2c_2m + c_3(m-1)^2$$
@@ -613,10 +616,10 @@ para demostrar la correctitud del algoritmo. Primero demostremos que $dp[i][0] =
     \end{lstlisting}
     Se tiene que el costo de calcular $m$ ($n$) es constante $c_1$ ($c_2$), en el peor caso se tiene que $m \leq n$ por 
     lo que se ejecuta la funci\'on \texttt{compute\_prefix} de costo $P(n,m)$ y se inicializa el contador que es una operaci\'on de costo constante $c_3$.
-    Comprobar si el primer caracter de $S$ est\'a en $T$ tiene un costo de $m$ y para el peor caso se ejecuta el c\'odigo dentro de la condicional, 
-    es decir, se llama a la funci\'on \texttt{compute\_sufix} que tiene costo $S(n,m)$, se actualiza el contador con una operaci\'on de orden constante $c_4$ 
+    Comprobar si el primer caracter de $S$ est\'a en $T$  es de costo  $m$ y para el peor caso se ejecuta el c\'odigo dentro de la condicional, 
+    es decir, se llama a la funci\'on \texttt{compute\_sufix} que tiene costo $S(n,m)$; se actualiza el contador con una operaci\'on de orden constante $c_4$ 
     y se contin\'ua incrementando en contador en un ciclo que se ejecuta $m-1$ veces. Adem\'as siempre se ejecuta un ciclo final 
-    de $n$ iteraciones para computar la cantidad de cadenas de prefijo $T$ donde el prefijo se obtiene solo con mivimientos hacia adelante. De modo que se obtiene: 
+    de $n$ iteraciones para computar la cantidad de cadenas de prefijo $T$ donde el prefijo se obtiene solo con movimientos hacia adelante. De modo que se obtiene: 
 
     $$ T(n,m) = c_1 + c_2 + P(m,n) + m + S(n,m) + c_4 +c_5(m-1) + c_6n $$
 	$$ T(n,m) \leq c_1 + c_2 + C_1nm + m + C_2m^2 + c_4 +c_5(m-1) + c_6n $$
