@@ -356,3 +356,7 @@ MigrationBackup/
 *.pdf
 *.synctex.gz
 *.fdb_latexmk
+informe/Informeppp.pdf
+.gitignore
+informe/Informeppp.bbl
+informe/Informeppp.blg
