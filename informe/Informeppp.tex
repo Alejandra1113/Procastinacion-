@@ -294,9 +294,12 @@ def solve_dp(S,T):
 	y por transitividad se cumple que $Cn^2 \leq T(n,m)$. Luego $T(n,m) = \Omega(n^2)$. Y finalmente $T(n,m)$ es $\theta(n^2)$.
 	
     \section*{Y si te dijera que esto se puede mejorar??}
+
     Al analizar numerosos casos, pudimos comprobar que en muchos de ellos, el primer caracter de $S$, $S_0$ no estaba presente en la cadena $T$, por tanto 
     luego de poner este caracter en $A$ hab\'ia solo una de las dos operaciones posibles para formar el prefijo $T$ en $A$ y era poner todo caracter de 
     $T$ en $A$ con movimientos hacia alante.\\ 
+
+    \textbf{Observaci\'on 1}\\ 
 
     (Dem) Sea una cadena $A$, con prefijo $T$,creada a partir de una cadena $S$, cuyo primer caracter $S_0$ no pertenezca al alfabeto de $T$, 
     supongamos que en el prefijo $T$ de $A$, alg\'un caracter se coloc\'o con un movimiento hacia atr\'as. Sea 
@@ -442,7 +445,10 @@ todos los restantes valores de $0 \leq j \leq i \leq n$
     Entonces la cantidad de cadenas que se pueden formar con prefijo $T$ construido solo con
     movimientos hacia alante, con los caracteres de $S$ ser\'ia:
 
-    $$ 2 \cdot \sum_{\forall i, T_{m-1} = S_i} (prefix(i,m-1) - prefix(i+1,m-1)) \cdot 2^{\max(i-1,0)} $$
+    \begin{equation} \label{eq:eq1}
+        2 \cdot \sum_{\forall i, T_{m-1} = S_i} (prefix(i,m-1) - prefix(i+1,m-1)) \cdot 2^{\max(i-1,0)}
+    \end{equation}
+
 
     Note que $prefix(i,m-1) - prefix(i+1,m-1)$ representa del total de cadenas posibles,
     con prefijo $T$ construido solo con movimientos hacia adelante, aquellas que tienen como
@@ -460,27 +466,27 @@ todos los restantes valores de $0 \leq j \leq i \leq n$
 
     \subsection*{Prefijo $T$ con al menos un movimiento hacia atr\'as}
 
-    Definamos la funci\'on $sufix(i,j)$ como la cantidad de cadenas $A_{i...j}$
-    \textit{construidas por aburrimiento} con los primeros $m$ 
-    caracteres de $S$ (es decir con los caracteres de $S_{0...m-1}$), que tengan
-    al menos un caracter colocado con un movimiento hacia atr\'as en la subcadena de $T$ que forman,
-    donde para:
+    % Definamos la funci\'on $sufix(i,j)$ como la cantidad de cadenas $A_{i...j}$
+    % \textit{construidas por aburrimiento} con los primeros $m$ 
+    % caracteres de $S$ (es decir con los caracteres de $S_{0...m-1}$), que tengan
+    % al menos un caracter colocado con un movimiento hacia atr\'as en la subcadena de $T$ que forman,
+    % donde para:
 
-    \begin{itemize}
-    	\item[i] $j < m$, $\quad A_{i...j} = T_{i...j}$
-    	\item[ii] $j \geq m $ y $i < m $, $\quad A_{i...j} = T_{i...m-1}A_{m...j}$
-    \end{itemize}
+    % \begin{itemize}
+    % 	\item[i] $j < m$, $\quad A_{i...j} = T_{i...j}$
+    % 	\item[ii] $j \geq m $ y $i < m $, $\quad A_{i...j} = T_{i...m-1}A_{m...j}$
+    % \end{itemize}
 
-    Observe que solo interesan los primeros $m$ caracteres de $S$, ya que a partir de los $m+1$,
-    hacer cualquier movimiento hacia atr\'as se sale del rango del prefijo de longitud $m$ de la
-    cadena que se est\'a formando, y por lo tanto este caracter no formar\'ia parte de un
-    futuro prefijo $T$. \\
-
-    
+    % Observe que solo interesan los primeros $m$ caracteres de $S$, ya que a partir de los $m+1$,
+    % hacer cualquier movimiento hacia atr\'as se sale del rango del prefijo de longitud $m$ de la
+    % cadena que se est\'a formando, y por lo tanto este caracter no formar\'ia parte de un
+    % futuro prefijo $T$. \\
 
     
+
     
-    $$---------------------------------------------$$
+    
+    % $$---------------------------------------------$$
     
     Definamos $sufix(i,j)$ como la cantidad de formas de construir $A_{i...j}$ por aburrimiento con los primeros $j-i+1$ caracteres de $S$, cuyo prefijo sea una subcadena de $T$ construida con al menos un movimiento hacia atrás, exceptuando con el primer caracter.
     
@@ -566,22 +572,49 @@ todos los restantes valores de $0 \leq j \leq i \leq n$
 	Del \textbf{Lema 1} y del \textbf{Lema 2}, se deduce que las cadenas que podamos formar que tengan prefijo $T$ con al menos un 
 	movimiento hacia atr\'as se originan solo si $m$ letras de $S$ generan sufijos de $T$, que tengan al menos un movimiento hacia atr\'as. \\
 	
-	{\tiny
-	Esto era lo que se tenía escrito pero veo más potable, lo que aparece después\\
+% 	{\tiny
+% 	Esto era lo que se tenía escrito pero veo más potable, lo que aparece después\\
 	
-	De ah\'i que de la funci\'on $sufix(i,j)$ sean de inter\'es los valores $$sufix(m -1 +i, i)~ \forall~0 \leq i \leq m$$ puesto que estos valores representan la cantidad
-	de cadenas que se pueden construir con prefijo igual al sufijo de $T$ de longitud $m-i$, a partir de los primeros $m$ caracteres de $S$ habiendo colocado alg\'un caracter con un
-	movimiento por detr\'as.\\
+% 	De ah\'i que de la funci\'on $sufix(i,j)$ sean de inter\'es los valores $$sufix(m -1 +i, i)~ \forall~0 \leq i \leq m$$ puesto que estos valores representan la cantidad
+% 	de cadenas que se pueden construir con prefijo igual al sufijo de $T$ de longitud $m-i$, a partir de los primeros $m$ caracteres de $S$ habiendo colocado alg\'un caracter con un
+% 	movimiento por detr\'as.\\
 	
-}
+% }
 	
 	De esta forma los valores que realmente nos interesan son aquellos donde:
 	$$sufix(i, i+m-1) ~ \forall~0 \leq i \leq m$$
 	que serían la cantidad de cadenas $A_{i...j}$ construidas por aburrimiento con los primeros $m$ caracteres de $S$, donde se tiene como prefijo una subcadena de $T$ que fue construida con al menos un movimiento hacia adelante, salvo con el primer caracter de $S$.
 	
-	\subsection*{Unión de ambos casos. Cambiar nombre}
-	
-	
+	\subsection*{Algoritmo din\'amico definitivo}
+
+    Luego de tener definidas las funciones $sufix$ y $prefix$, as\'i como sus respectivas 
+    representaciones computacionales \texttt{compute\_sufix} y \texttt{compute\_prefix} solo queda 
+    demostrar la correctitud del algoritmo \texttt{ppp}, en el que se computa el valor esperado como respuesta del problema inicial.\\ 
+
+    En algoritmo din\'amico final utiliza las matrices resultantes de las dos funciones anteriores y se basa en la idea planteada 
+    previamente de que las cadenas con prefijo $T$ se pueden particionar en dos conjuntos, los que en la porci\'on de cadena 
+    correspondiente a $T$ solo tienen movimientos hacia adelante y los que tienen al menos un movimiento hacia atr\'as.\\ 
+    
+    Precisamente por eso, en el algoritmo \texttt{ppp} se computa el valor de $prefix$ y se almacena en una matriz. Bas\'andonos en 
+    la \textbf{Observaci\'on 1} comprobamos si $S_0 \in T$ en caso en que $S_0$ no pertenezca al alfabeto generado por $T$,
+     todas las cadenas que tengan a $T$ como prefijo forman $T$ con movimientos hacia adelante y basta con tener la matriz que almacena los valores $prefix$
+     para como se expresa en la equaci\'on (\ref{eq:eq1}) computar el n\'umero de cadenas que ser\'ia la soluci\'on final.\\ 
+
+     En caso en que $S_0 \in T$, entonces es necesario contar el n\'umero de cadenas que tienen a $T$ como prefijo y en que durante la 
+     construcci\'on de $T$ emplearon almenos un movimiento hacia atr\'as, para esto se computa la funci\'on $sufix$ y su valor se 
+     guarda en otra matriz. Bas\'andonos en el \textbf{Lema 1} y \textbf{Lema 2}, as\'i como en la conclusi\'on de que los 
+     valores que necesitamos de la funci\'on $sufix$ son aquellos que guardan la cantidad de palabras que tiene como prefijo un sufijo de $T$; 
+     sabemos que cada uno de los valores de $sufix(i, i+m-1) ~ \forall~ 1 \leq i \leq m$, se puede combinar con la cantidad de formas de hacer 
+     el prefijo de $T$ de longitud igual a $m -i$ con los $n-m$ \'ultimos caracteres de $S$, es decir aplicando principio de multiplicaci\'on 
+     se tiene que hay un total de $sufix(i, i+m-1) \cdot prefix(m,i-1)  ~ \forall~ 1 \leq i \leq m $, lo que equivale a 
+     $$\sum_{i=1}^{m} sufix(i, i+m-1) \cdot prefix(m,i-1) $$ 
+
+     N\'otese que tanto en este c\'alculo como en la funci\'on \texttt{ppp} el caso en que $i = 0$ se trata aparte, porque $sufix(0, m-1)$
+    indica cadenas en las que el sufijo de $T$ que se pudo formar con los $m$ primeros caracteres de $S$ es igual a $T$, por tanto no hay que 
+    computar cuantas combinaciones de prefijo podemos agregar a estas cadenas, sino que hay que computar para cada una de ellas, agreagar cada una de las restantes 
+    $n - m$ letras de $S$, o no agregar nada. De este modo se obtiene que por principio de multiplicaci\'on para $i = 0$ se pueden obtener 
+    $$sufix(i, i+m-1) \cdot (n - m + 1)$$.
+    
     
     \section*{An\'alisis de complejidad temporal}
 
