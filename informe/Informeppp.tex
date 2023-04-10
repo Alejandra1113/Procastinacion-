@@ -295,7 +295,7 @@ def solve_dp(S,T):
 	
     \section*{Y si te dijera que esto se puede mejorar??}
     Al analizar numerosos casos, pudimos comprobar que en muchos de ellos, el primer caracter de $S$, $S_0$ no estaba presente en la cadena $T$, por tanto 
-    luego de poner este caracter en $A$ hab\'ia solo una de las dos opraciones posibles para formar el prefijo $T$ en $A$ y es poner todo caracter de 
+    luego de poner este caracter en $A$ hab\'ia solo una de las dos operaciones posibles para formar el prefijo $T$ en $A$ y era poner todo caracter de 
     $T$ en $A$ con movimientos hacia alante.\\ 
 
     (Dem) Sea una cadena $A$, con prefijo $T$,creada a partir de una cadena $S$, cuyo primer caracter $S_0$ no pertenezca al alfabeto de $T$, 
@@ -306,7 +306,7 @@ def solve_dp(S,T):
     si $S_0$ no pertenece a las letras que forman a $T$, todas las cadenas $A$ que tengan a $T$ como prefijo construidas por aburimiento, 
     contruyen al prefijo solo con movimientos hacia adelante.\\
 
-    De la demostraci\'on anterior se deduce que como solo se usan movimientos hacia alante, reverso del prefijo $T$ ha de ser subsecuencia de $S$.\\
+    De la demostraci\'on anterior se deduce que como solo se usan movimientos hacia alante, el reverso del prefijo $T$ ha de ser subsecuencia de $S$.\\
 
     De esta observaci\'on percibimos que era posible obtener una soluci\'on al problema separando los modos de construcci\'on de prefijos 
     en una partici\'on: 
@@ -316,9 +316,16 @@ def solve_dp(S,T):
         \item Con cadenas cuyo prefijo $T$ se contruy\'o con al menos un movimiento hacia atr\'as.
     \end{itemize}
 
+	IMPORTANTE: Por una cuestión de comodidad en el primer caso, incluimos que el primer caracter de $S$ pueda construir por detrás a $T$, mientras que en el segundo caso lo excluimos.
+
     \subsection*{Prefijo $T$ solo con movimientos hacia alante}
 
-    Definamos la funci\'on $prefix(i,j)$ como la cantidad de prefijos de $T$ de longitud $j + 1$ que se pueden formar utilizando los \'ultimos $n - i$ caracteres de $S$ con movimientos hacia alante.\\ 
+    Definamos la funci\'on $prefix(i,j)$ como la cantidad de prefijos de $T$ de longitud $j + 1$ que se pueden formar utilizando los \'ultimos $n - i$ caracteres de $S$ con movimientos hacia alante.\\
+    
+    Para que quede claro tenga en cuenta que nuestra definición solo incluye las formas en que puede formarse un prefijo de $T$ ($T^p$) y sufijos $A^\prime$ de $A$ (con letras sobrantes), en una cadena $A^*$ que ya estaba inicialmente formada, es decir, solo se tiene en cuenta las formas en que pueden formarse $T^p$ y $A^\prime$. Para una mayor claridad $A$ se puede ver como:
+    $$T^pA^*A^\prime$$
+    
+    Debe quedar claro, que no se está teniendo en cuenta, en este momento las formas en que puede formarse $A^*$.\\
 
     Si hacemos un primer an\'alisis, nos podemos dar cuenta que:
     $$prefix(i,0) = \left\{ \begin{aligned}
@@ -361,9 +368,9 @@ def solve_dp(S,T):
     Trivialmente cuando $i=n$, la cantidad de prefijos de longitud $j+1$
     que se pueden hacer con los \'ultimos $0$ caracteres de $S$ es $0$.
 
-    Cuando $i < n$ y $T_i = S_{n-i-1}$, se puede colocar por delante $S_{n-i-1}$ faltar\'ia poner las letras correspondientes
-    al prefijo de $T$ de longitud $j$ para obtener el prefijo $T$ de longitud $j+1$, como en la cadena en formaci\'on hasta el momento se tienen que 
-    haber puesto con los movimientos permitidos todos los caracteres de $S_{0... n-i-1}$, el prefijo de longitud $j$ que falta se debe pode hacer con los 
+    Cuando $i < n$ y $T_i = S_{n-i-1}$, se puede colocar por delante $S_{n-i-1}$ y faltar\'ia poner las letras correspondientes
+    al prefijo de $T$ de longitud $j$ para obtener el prefijo $T$ de longitud $j+1$. Como en la cadena en formaci\'on hasta el momento se tienen que 
+    haber puesto con los movimientos permitidos todos los caracteres de $S_{0... n-i-1}$, el prefijo de longitud $j$ que falta se debe poder hacer con los 
     restantes $n-i$ caracteres finales, es decir que se pueden obtener tantos como $prefix(i+1, j-1)$. Adem\'as se conservan las formas de hacer el prefijo de longitud $j+1$
     sin utilizar el caracter $S_{n-i-1}$ como parte del prefijo, o sea $prefix(i+1,j)$.\\
 
@@ -380,7 +387,7 @@ para demostrar la correctitud del algoritmo. Primero demostremos que $dp[i][0] =
 \begin{itemize}
     \item Caso Base: $i = n$
     Cuando $i=n$, $dp[n][0] = 0$ ya que la inicializaci\'on de la matr\'iz rellena $dp$ con $0$ por defecto (esto se cumple adem\'as para toda $j$). 
-    y  $prefix(n,0)=0$ (en general $prefix(n,j) = 0$), de done $prefix(n,0)= dp[n][0]$.
+    y  $prefix(n,0)=0$ (en general $prefix(n,j) = 0$), de donde $prefix(n,0)= dp[n][0]$.
 
     \item Caso Hip\'otesis: Supongamos que para $i = k$ se cumple que $dp[k][0] = prefix(k,0)$.\\ 
     
@@ -489,17 +496,14 @@ todos los restantes valores de $0 \leq j \leq i \leq n$
     
     Adicionalmente si $j \ge m$, el caracter $S_{j-i+1}$ puede colocarse por detrás de la cadena formada $A_{i...j-1}$ sin influir en la formación de la subcadena $T$, y se mantendría la cantidad de cadenas de esta forma, que fueron construidas con los primeros $j-i$ caracteres de $S$ (y que tengan un movimiento hacia atrás en la formación de la subcadena $T$), es decir, tendríamos $sufix(i, j-1)$.
     
-    Y por último si en vez de la condición anterior tenemos que $T_j = S_{j-i+1}$, como podemos hacer un movimiento hacia atrás que influya en la formación de la subcadena de $T$ en $A_{i...j}$. Por lo tanto tendremos una cantidad posibles de cadenas de la forma $A_{i...j}$ que con al menos un movimiento hacia atrás forman la subcadena $T$, igual a la cantidad de formas que se tienen de formar cadenas $A_{i...j-1}$ construidas por aburrimiento, es decir, $f(i,j-1)$. Recuerde que $f(i,j)$ fue definida en la primera dinámica. La diferencia con la nueva dinámica es que no serán necesario todos los valores de los intervalos, sino los casos donde se puede tener una subcadena de $T$ como prefijo de $A_{i...j}$ (casos i y ii).
+    Y por último si en vez de la condición anterior tenemos que $T_j = S_{j-i+1}$, como podemos hacer un movimiento hacia atrás que influya en la formación de la subcadena de $T$ en $A_{i...j}$, tendremos una cantidad posibles de cadenas de la forma $A_{i...j}$ que con al menos un movimiento hacia atrás forman la subcadena $T$, igual a la cantidad de formas que se tienen de formar cadenas $A_{i...j-1}$ construidas por aburrimiento, es decir, $f(i,j-1)$. Recuerde que $f(i,j)$ fue definida en la primera dinámica. La diferencia con la nueva dinámica es que no serán necesario todos los valores de los intervalos, sino los casos donde se puede tener una subcadena de $T$ como prefijo de $A_{i...j}$ (casos i y ii).
     
-    De esta forma los valores que realmente nos interesan son aquellos donde:
-    $$sufix(i, i+m-1)$$
-    que serían la cantidad de cadenas $A_{i...j}$ construidas por aburrimiento con los primeros $m$ caracteres de $S$, donde se tiene como prefijo una subcadena de $T$ que fue construida con al menos un movimiento hacia adelante, salvo con el primer caracter de $S$.
     
 
     \subsubsection*{Correctitud de la funci\'on \texttt{compute\_sufix}}
 
     Para obtener una representaci\'on computacional de la funci\'on $sufix$,
-    rellenamos una matriz $dp$ de $m \times m$ tal que $dp[i][j] = sufix(i,j)$. El proceso es muy similar a la construcción de la matriz que computa $f(i,j)$, explicada en la primera dinámica.
+    rellenamos una matriz $dp$ de $m \times 2m$ tal que $dp[i][j] = sufix(i,j)$. El proceso es muy similar a la construcción de la matriz que computa $f(i,j)$, explicada en la primera dinámica.
     
     Demostremos con inducción completa sobre el tamaño de la cadena $A_{i...j}$ que $dp[i][j]=sufix(i,j)$ al terminar el algoritmo.
     
@@ -537,7 +541,7 @@ todos los restantes valores de $0 \leq j \leq i \leq n$
 	
 	Sea $A$ una cadena construida por aburrimiento, a partir de $S$ y prefijo $T$. Si para construir $A$ se utiliz\'o al menos un movimiento hacia atr\'as para formar a $T$, entonces este caracter está antes de la posición $m$ en $S$.
 	
-	(Dem) Supongamos que existe un caracter $S_k$ con $k \ge m$, que fue utilizado para construir el prefijo $T$ en $A$, con un movimiento hacia atrás. Como $S_k$ sería el $(k+1)-$ésimo caracter de $S$ que se utilice para construir algún $A$, entonces esta ya fue construida con $k$ caracteres, y por lo tanto al añadir por atrás el caracter $S_k$, entonces este caracter no pertenecería al prefijo, ya que estaría en la posición $k$ de $A$ con $k \ge m$, y el prefijo estaría en $A_{0...m-1}$. De esta forma entramos en contradicción y lo supuesto es falso.	
+	(Dem) Supongamos que existe un caracter $S_k$ con $k \ge m$, que fue utilizado para construir el prefijo $T$ en $A$, con un movimiento hacia atrás. Como $S_k$ sería el $(k+1)-$ésimo caracter de $S$ que se utilice para construir $A$, entonces esta ya fue construida con $k$ caracteres, y por lo tanto al añadir por atrás el caracter $S_k$, entonces este caracter no pertenecería al prefijo, ya que estaría en la posición $k$ de $A$ con $k \ge m$, y el prefijo estaría en $A_{0...m-1}$. De esta forma entramos en contradicción y lo supuesto es falso.	
 	
 	\textbf{Lema 2}
 	
@@ -547,15 +551,15 @@ todos los restantes valores de $0 \leq j \leq i \leq n$
 	
 	(Dem) Supongamos que $A_{m-1} = T_{m-1} = S_{l}$ fue colocado con un movimiento hacia adelante.
 	Como sabemos que al menos se realiz\'o un movimiento hacia atr\'as durante la construcci\'on
-	del prefijo $T$, entonces existe alg\'un $S_{k}$ que con un movimiento hacia atr'as fue colocado
+	del prefijo $T$, entonces existe alg\'un $S_{k}$ que con un movimiento hacia atr\'as fue colocado
 	en $A$ en una de las primeras $m-1$ posiciones. Si $k<l$, entonces $S_l$ al colocarse por delante
 	en $A$, este ya tendr\'a colocado $S_k$, en alguna posici\'on a su derecha, y por lo tanto
-	como $S_l$ es el \'utlimo caracter del prefijo, $S_k$ quedar'ia fuera de este (contradicci\'on).
+	como $S_l$ es el \'utlimo caracter del prefijo, $S_k$ quedar\'ia fuera de este (contradicci\'on).
 	Para $l<k$, el caracter $S_l$ fue colocado primeramente por delante, y luego $S_k$ por detr\'as,
 	donde nuevamente este caracter estar\'ia en alguna posici\'on a la derecha de $S_l$ en $A$
 	quedando nuevamente fuera del prefijo (contradicci\'on).
 	Por \'ultimo no tiene sentido tomar $k=l$, porque este se pone por alante bajo la suposici\'on
-	y entramos en otra contradicci'on.\\
+	y entramos en otra contradicci\'on.\\
 	
 	
 	
@@ -566,7 +570,7 @@ todos los restantes valores de $0 \leq j \leq i \leq n$
 	Esto era lo que se tenía escrito pero veo más potable, lo que aparece después\\
 	
 	De ah\'i que de la funci\'on $sufix(i,j)$ sean de inter\'es los valores $$sufix(m -1 +i, i)~ \forall~0 \leq i \leq m$$ puesto que estos valores representan la cantidad
-	de cadenas que se pueden constuir con prefijo igual al sufijo de $T$ de longitud $m-i$, a partir de los primeros $m$ caracteres de $S$ habiendo colocado alg\'un caracter con un
+	de cadenas que se pueden construir con prefijo igual al sufijo de $T$ de longitud $m-i$, a partir de los primeros $m$ caracteres de $S$ habiendo colocado alg\'un caracter con un
 	movimiento por detr\'as.\\
 	
 }
