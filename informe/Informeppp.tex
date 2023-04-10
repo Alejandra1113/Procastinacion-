@@ -469,31 +469,9 @@ todos los restantes valores de $0 \leq j \leq i \leq n$
     cadena que se est\'a formando, y por lo tanto este caracter no formar\'ia parte de un
     futuro prefijo $T$. \\
 
-    \textbf{Lema 1}
-
-    Sea $A$ una cadena construida por aburrimiento, a partir de $S$ y prefijo $T$.
-    Si para construir $A$ se utiliz\'o al menos un movimiento hacia atr\'as para formar a $T$,
-    entonces $A_{m-1} = T_{m-1} = S_{l}$ fue colocado con un movimiento hacia atr\'as. \\
     
-    (Dem) Supongamos que $A_{m-1} = T_{m-1} = S_{l}$ fue colocado con un movimiento hacia adelante.
-    Como sabemos que al menos se realiz\'o un movimiento hacia atr\'as durante la construcci\'on
-    del prefijo $T$, entonces existe alg\'un $S_{k}$ que con un movimiento hacia atr'as fue colocado
-    en $A$ en una de las primeras $m-1$ posiciones. Si $k<l$, entonces $S_l$ al colocarse por delante
-    en $A$, este ya tendr\'a colocado $S_k$, en alguna posici\'on a su derecha, y por lo tanto
-    como $S_l$ es el \'utlimo caracter del prefijo, $S_k$ quedar'ia fuera de este (contradicci\'on).
-    Para $l<k$, el caracter $S_l$ fue colocado primeramente por delante, y luego $S_k$ por detr\'as,
-    donde nuevamente este caracter estar\'ia en alguna posici\'on a la derecha de $S_l$ en $A$
-    quedando nuevamente fuera del prefijo (contradicci\'on).
-    Por \'ultimo no tiene sentido tomar $k=l$, porque este se pone por alante bajo la suposici\'on
-    y entramos en otra contradicci'on.\\
 
-    Del \textbf{Lema 1} y del principio que todo movimiento hacia atr\'as presente en el prefijo $T$ que se forme en la 
-    cadena $A$ se realiza en los primeros $m$ caracteres de $S$, se deduce que las cadenas que podamos formar que tengan prefijo $T$ con al menos un 
-    movimiento hacia atr\'as se originan solo si $m$ letras de $S$ se generan sufijos de $T$ que tengan al menos un movimiento hacia atr\'as. \\
-
-    De ah\'i que de la funci\'on $sufix(i,j)$ sean de inter\'es los valores $$sufix(m -1 +i, i)~ \forall~0 \leq i \leq m$$ puesto que estos valores representan la cantidad
-    de cadenas que se pueden constuir con prefijo igual al sufijo de $T$ de longitud $m-i$, a partir de los primeros $m$ caracteres de $S$ habiendo colocado alg\'un caracter con un
-    movimiento por detr\'as.\\
+    
     
     $$---------------------------------------------$$
     
@@ -553,9 +531,54 @@ todos los restantes valores de $0 \leq j \leq i \leq n$
 	
 	Así queda demostrado por Principio de Inducción Matemática que $$dp[i][j]=sufix(i,j)$$.
 	
+	\section*{Correctitud del algoritmo nuevo}
 	
-
-   
+	\textbf{Lema 1}
+	
+	Sea $A$ una cadena construida por aburrimiento, a partir de $S$ y prefijo $T$. Si para construir $A$ se utiliz\'o al menos un movimiento hacia atr\'as para formar a $T$, entonces este caracter está antes de la posición $m$ en $S$.
+	
+	(Dem) Supongamos que existe un caracter $S_k$ con $k \ge m$, que fue utilizado para construir el prefijo $T$ en $A$, con un movimiento hacia atrás. Como $S_k$ sería el $(k+1)-$ésimo caracter de $S$ que se utilice para construir algún $A$, entonces esta ya fue construida con $k$ caracteres, y por lo tanto al añadir por atrás el caracter $S_k$, entonces este caracter no pertenecería al prefijo, ya que estaría en la posición $k$ de $A$ con $k \ge m$, y el prefijo estaría en $A_{0...m-1}$. De esta forma entramos en contradicción y lo supuesto es falso.	
+	
+	\textbf{Lema 2}
+	
+	Sea $A$ una cadena construida por aburrimiento, a partir de $S$ y prefijo $T$.
+	Si para construir $A$ se utiliz\'o al menos un movimiento hacia atr\'as para formar a $T$,
+	entonces $A_{m-1} = T_{m-1} = S_{l}$ fue colocado con un movimiento hacia atr\'as. \\
+	
+	(Dem) Supongamos que $A_{m-1} = T_{m-1} = S_{l}$ fue colocado con un movimiento hacia adelante.
+	Como sabemos que al menos se realiz\'o un movimiento hacia atr\'as durante la construcci\'on
+	del prefijo $T$, entonces existe alg\'un $S_{k}$ que con un movimiento hacia atr'as fue colocado
+	en $A$ en una de las primeras $m-1$ posiciones. Si $k<l$, entonces $S_l$ al colocarse por delante
+	en $A$, este ya tendr\'a colocado $S_k$, en alguna posici\'on a su derecha, y por lo tanto
+	como $S_l$ es el \'utlimo caracter del prefijo, $S_k$ quedar'ia fuera de este (contradicci\'on).
+	Para $l<k$, el caracter $S_l$ fue colocado primeramente por delante, y luego $S_k$ por detr\'as,
+	donde nuevamente este caracter estar\'ia en alguna posici\'on a la derecha de $S_l$ en $A$
+	quedando nuevamente fuera del prefijo (contradicci\'on).
+	Por \'ultimo no tiene sentido tomar $k=l$, porque este se pone por alante bajo la suposici\'on
+	y entramos en otra contradicci'on.\\
+	
+	
+	
+	Del \textbf{Lema 1} y del \textbf{Lema 2}, se deduce que las cadenas que podamos formar que tengan prefijo $T$ con al menos un 
+	movimiento hacia atr\'as se originan solo si $m$ letras de $S$ generan sufijos de $T$, que tengan al menos un movimiento hacia atr\'as. \\
+	
+	{\tiny
+	Esto era lo que se tenía escrito pero veo más potable, lo que aparece después\\
+	
+	De ah\'i que de la funci\'on $sufix(i,j)$ sean de inter\'es los valores $$sufix(m -1 +i, i)~ \forall~0 \leq i \leq m$$ puesto que estos valores representan la cantidad
+	de cadenas que se pueden constuir con prefijo igual al sufijo de $T$ de longitud $m-i$, a partir de los primeros $m$ caracteres de $S$ habiendo colocado alg\'un caracter con un
+	movimiento por detr\'as.\\
+	
+}
+	
+	De esta forma los valores que realmente nos interesan son aquellos donde:
+	$$sufix(i, i+m-1) ~ \forall~0 \leq i \leq m$$
+	que serían la cantidad de cadenas $A_{i...j}$ construidas por aburrimiento con los primeros $m$ caracteres de $S$, donde se tiene como prefijo una subcadena de $T$ que fue construida con al menos un movimiento hacia adelante, salvo con el primer caracter de $S$.
+	
+	\subsection*{Unión de ambos casos. Cambiar nombre}
+	
+	
+    
     \section*{An\'alisis de complejidad temporal}
 
     Como el algoritmo final contempla el llamado a las funciones \texttt{compute\_prefix} y \texttt{compute\_sufix}
