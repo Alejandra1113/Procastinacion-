@@ -491,12 +491,64 @@ para demostrar la correctitud del algoritmo. Primero demostremos que $dp[i][0] =
     De ah\'i que de la funci\'on $sufix(i,j)$ sean de inter\'es los valores $$sufix(m -1 +i, i)~ \forall~0 \leq i \leq m$$ puesto que estos valores representan la cantidad
     de cadenas que se pueden constuir con prefijo igual al sufijo de $T$ de longitud $m-i$, a partir de los primeros $m$ caracteres de $S$ habiendo colocado alg\'un caracter con un
     movimiento por detr\'as.\\
-
+    
+    Definamos $sufix(i,j)$ como la cantidad de formas de construir $A_{i...j}$ por aburrimiento con los primeros $j-i+1$ caracteres de $S$, cuyo prefijo sea una subcadena de $T$ construida con al menos un movimiento hacia atrás, exceptuando con el primer caracter.
+    
+    Note que del final de la definición de $sufix(i,j)$ se deduce que:
+    $$sufix(i,i) = 0$$
+    
+    Si hacemos un análisis más genérico llegaremos a que:
+    $$sufix(i,j) = sufix(i+1,j)\mathbb{I}_{ \{ T_i = S_{j-i+1} \}} + 
+    sufix(i, j-1) \mathbb{I}_{ \{ j \ge m \}} + 
+    f(i, j-1) \mathbb{I}_{ \{ T_j = S_{j-i+1}\}}$$
+    
+    Note que primeramente, si el caracter $S_{j-i+1}$ puede colocarse por delante de $A_{i+1...j}$, se mantendrían la cantidad de formas en que se puede construir la actual $A_{i+1...j}$ (con al menos un movimiento hacia atrás en la construcción de la subcadena de $T$), lo que sería $sufix(i+1,j)$.
+    
+    Adicionalmente si $j \ge m$, el caracter $S_{j-i+1}$ puede colocarse por detrás de la cadena formada $A_{i...j-1}$ sin influir en la formación de la subcadena $T$, y se mantendría la cantidad de cadenas de esta forma, que fueron construidas con los primeros $j-i$ caracteres de $S$ (y que tengan un movimiento hacia atrás en la formación de la subcadena $T$), es decir, tendríamos $sufix(i, j-1)$.
+    
+    Y por último si en vez de la condición anterior tenemos que $T_j = S_{j-i+1}$, como podemos hacer un movimiento hacia atrás que influya en la formación de la subcadena de $T$ en $A_{i...j}$. Por lo tanto tendremos una cantidad posibles de cadenas de la forma $A_{i...j}$ que con al menos un movimiento hacia atrás forman la subcadena $T$, igual a la cantidad de formas que se tienen de formar cadenas $A_{i...j-1}$ construidas por aburrimiento, es decir, $f(i,j-1)$. Recuerde que $f(i,j)$ fue definida en la primera dinámica. La diferencia con la nueva dinámica es que no serán necesario todos los valores de los intervalos, sino los casos donde se puede tener una subcadena de $T$ como prefijo de $A_{i...j}$ (casos i y ii).
+    
+    De esta forma los valores que realmente nos interesan son aquellos donde:
+    $$sufix(i, i+m-1)$$
+    que serían la cantidad de cadenas $A_{i...j}$ construidas por aburrimiento con los primeros $m$ caracteres de $S$, donde se tiene como prefijo una subcadena de $T$ que fue construida con al menos un movimiento hacia adelante, salvo con el primer caracter de $S$.
+    
 
     \subsubsection*{Correctitud de la funci\'on \texttt{compute\_sufix}}
 
     Para obtener una representaci\'on computacional de la funci\'on $sufix$,
-    rellenamos una matriz $dp$ de $m \times m$ tal que $dp[i][j] = sufix(i,j)$. 
+    rellenamos una matriz $dp$ de $m \times m$ tal que $dp[i][j] = sufix(i,j)$. El proceso es muy similar a la construcción de la matriz que computa $f(i,j)$, explicada en la primera dinámica.
+    
+    Demostremos con inducción completa sobre el tamaño de la cadena $A_{i...j}$ que $dp[i][j]=sufix(i,j)$ al terminar el algoritmo.
+    
+    \begin{itemize}
+    	\item Caso Base: $|A_{i...j}| = 1$
+    	
+    	Por definición vimos que $sufix(i,i) = 0$, y al hacer la inicialización de la matriz como todos los valores por defecto son $0$, entonces $dp[i][i] = sufix(i,i)$.
+    	Por otra parte $tmdp[i][i]$, también coincidirá con $f(i,i)$ (vea la justificación en el caso base de la primera inducción realizada).
+    	
+    	\item Caso Hipótesis:
+    	Supongamos que para toda $|A_{i^\prime...j^\prime}| = k$ se cumple que $dp[i^\prime][j^\prime] = sufix(i^\prime, j^\prime)$ y $tmdp[i^\prime][j^\prime] = f(i^\prime, j^\prime)$.
+    	
+    	Sea $|A_{i...j}| = k + 1$, vea que $tmdp[i][j] = f(i,j)$ como mismo se explica en la primera inducción, ya que la única diferencia es que ahora la condición $i \ge m$ nunca va a ocurrir, pero esto no influirá en su formulación.
+    	
+    	Por otra parte, como $sufix(i,j)$ es igual a:
+    	$$ sufix(i+1,j)\mathbb{I}_{ \{ T_i = S_{j-i+1} \}} + 
+    	sufix(i, j-1) \mathbb{I}_{ \{ j \ge m \}} + 
+    	f(i, j-1) \mathbb{I}_{ \{ T_j = S_{j-i+1}\}} $$
+    	y como $j-(i+1)+1 = j-i = k$ y $j-1 - i + 1 = j-i=k$, entonces por hipótesis se cumple que:
+    	$$ dp[i+1][j] = sufix(i+1,j) $$
+    	$$ dp[i][j-1] = sufix(i,j-1) $$
+    	$$ tmdp[i][j-1] = f(i,j-1) $$
+    	Por lo tanto $sufix(i,j)$ puede quedar expresado como:
+    	$$ dp[i+1][j]\mathbb{I}_{ \{ T_i = S_{j-i+1} \}} + 
+    	dp[i][j-1] \mathbb{I}_{ \{ j \ge m \}} + 
+    	tmdp[i][j-1] \mathbb{I}_{ \{ T_j = S_{j-i+1}\}} $$
+    	Y finalmente $dp[i][j] = sufix(i,j)$.    	
+    \end{itemize}
+	
+	Así queda demostrado por Principio de Inducción Matemática que $$dp[i][j]=sufix(i,j)$$.
+	
+	
 
    
     \section*{An\'alisis de complejidad temporal}
